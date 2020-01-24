@@ -1,26 +1,27 @@
 import platform    # For getting the operating system name
-import subprocess
+import subprocess  # For calling commands
+import csv         # For reading CSV files
 
-hostname ="10.73.107.200"
-print(hostname)
-output = subprocess.Popen(["ping",hostname],stdout = subprocess.PIPE).communicate()[0]
+def ping(ip):
+    # Runs 1 ping and saves the commandline text to output
+    output = subprocess.Popen(["ping",'-n','1',ip],stdout = subprocess.PIPE).communicate()[0]
 
-# print(output)
-# def ping(host):
-#     """
-#     Returns True if host (str) responds to a ping request.
-#     Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
-#     """
+    # Returns a fail if unable to reach host
+    if ('timed out' in str(output) or 'unreachable' in str(output)):
+        return 1
+    else:
+        return 0
 
-#     # Option for the number of packets as a function of
-#     param = '-n' if platform.system().lower()=='windows' else '-c'
+def readFile():
+    with open('test.csv') as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        line_count = 0
 
-#     # Building the command. Ex: "ping -c 1 google.com"
-#     command = ['ping', param, '1', host]
+        for row in reader:
+            if line_count == 0:
+                print(f'Column names are {", ".join(row)}')
+                line_count += 1
+            else:
+                print
 
-#     return subprocess.call(command) == 0
-
-# ping('10.73.107.200')
-
-if ('timed out' in str(output) or 'unreachable' in str(output)):
-    print("Offline")
+readFile()
